@@ -57,7 +57,12 @@ lib/
     ├── result/          # Rich diagnostic visualization & PDF export
     ├── history/         # Local historical diagnoses
     ├── settings/        # Server configuration and preference panel
-    └── education/       # Dermatological guidelines and tutorial content
+    ├── education/       # Dermatological guidelines and tutorial content
+    ├── auth/            # Clinician authentication & multi-step doctor registration
+    ├── doctor_directory/# Verified regional dermatologist directory
+    ├── referrals/       # Tele-expertise case dispatch & second opinions
+    ├── patients/        # Pseudonymous patient records & lesion timelines
+    └── qr_followup/     # Patient QR follow-up token verification
 ```
 
 ---

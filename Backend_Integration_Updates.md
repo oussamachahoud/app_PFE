@@ -37,3 +37,29 @@ This guarantees the model has full context, reducing the need for default/impute
 ### 2.4. Inference Connection Timeout Extension
 Multimodal calculations, test-time data augmentation (TTA), and CPU execution can increase backend response time.
 *   **Optimization**: Extended the network client connection timeout value from `30 seconds` to `90 seconds` inside `api_service.dart` to prevent premature socket timeouts.
+
+
+---
+
+## 3. Telemedicine V2.0 & Mobile Security Hardening
+
+To align with Algerian Executive Decree 1275 and prevent layperson self-diagnosis risks, the V2.0 mobile integration enforces strict clinical safeguards:
+
+### 3.1. Strict Clinician Authentication for Diagnostic Capture
+* **Pre-requisite Check**: `takePhoto()` and `uploadFromGallery()` inside `HomeController` verify `isAuthenticated` prior to initializing the camera or gallery picker.
+* **Guest Flow**: Unauthenticated guests clicking diagnostic actions receive a guided notification (`Clinician Login Required`) and are transitioned to the login portal.
+* **401 Resilience**: The backend endpoint `POST /api/v1/predict` strictly requires an active doctor JWT token, returning `401 Unauthorized` if omitted.
+
+### 3.2. Centralized Reactive Authentication (GetX Obx Optimization)
+* **Reactivity Source**: `AuthService.isLoggedIn` (`RxBool`) acts as the single source of truth for clinician identity.
+* **Zero-Crash UI**: Eliminates GetX Obx runtime assertion crashes by ensuring all observing widgets read reactive state (`_auth.isAuthenticated`).
+
+### 3.3. Fast-Fail Network Timeouts
+* **Timeout Guards**: Added a strict 4-second timeout to initial user verification (`/auth/me`) and DNS queries (`InternetAddress.lookup`).
+* **Offline Fallback**: Prevents the UI thread from hanging on the Splash screen for 30 seconds when connecting on physical devices across cellular or local network boundaries.
+
+### 3.4. Android Rendering Stability
+* **Vulkan Driver Mitigation**: Set `io.flutter.embedding.android.EnableImpeller = false` in `AndroidManifest.xml` to prevent GPU rendering stalls and ANR crashes across mid-range and legacy Android hardware.
+
+### 3.5. Distributed Cloudflare Tunnel Integration
+* **API Namespace**: Mobile endpoints target `/api/v1/*` behind secure HTTPS tunnels, supporting full cross-network telemedicine referrals, doctor directories, and lesion timelines.
